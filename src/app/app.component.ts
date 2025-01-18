@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 
 import {
   PoMenuItem,
@@ -17,17 +17,24 @@ import {
     RouterOutlet,
     PoToolbarModule,
     PoMenuModule,
-    PoPageModule
+    PoPageModule,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
+  constructor(private router: Router) {}
+
   readonly menus: Array<PoMenuItem> = [
-    { label: 'Home', action: this.onClick.bind(this) },
+    { label: 'Home', action: this.callHomePage.bind(this) },
+    { label: 'Cidades', action: this.callCidadeComponent.bind(this) },
   ];
 
-  private onClick() {
-    alert('Clicked in menu item');
+  private callHomePage() {
+    this.router.navigate(['']);
+  }
+
+  private callCidadeComponent() {
+    this.router.navigate(['cidades']);
   }
 }
