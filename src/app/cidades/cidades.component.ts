@@ -1,9 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PoBreadcrumb, PoNotificationService, PoPageFilter, PoPageModule, PoTableColumn, PoTableModule } from '@po-ui/ng-components';
 import { CidadesService } from '../shared/services/cidades.service';
-import { Subscription } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-cidades',
@@ -16,15 +15,17 @@ export class CidadesComponent implements OnInit  {
   public readonly breadcrumb: PoBreadcrumb;
   public readonly filterSettings: PoPageFilter;
   public readonly cidadesColumns: Array<PoTableColumn>;
-  private subs: Subscription = new Subscription();
-
+  public isLoading: boolean;
   public items: Array<any>
+  private originalItems: Array<any>
 
   constructor(private router: Router, private cidadesService: CidadesService, private poNotification: PoNotificationService) {
     this.breadcrumb = this.buildBreadcrumb();
     this.filterSettings = this.buildFilter();
     this.cidadesColumns = this.buildColumns();
+    this.originalItems = [];
     this.items = [];
+    this.isLoading = false;
   }
 
   ngOnInit(): void {
@@ -32,12 +33,16 @@ export class CidadesComponent implements OnInit  {
   }
 
   private buscarTodasCidades(){
+    this.isLoading = true;
     this.cidadesService.getAllCidades().subscribe({
       next: (items: any)=>{
-        this.items = items;
+        this.originalItems = items;
+        this.items = [...this.originalItems];
+        this.isLoading = false;
       },
       error: (err: any)=>{
         console.error(err)
+        this.isLoading = false;
         this.poNotification.error("Aconteceu um erro na busca das cidades");
       }
     })
@@ -56,11 +61,24 @@ export class CidadesComponent implements OnInit  {
     return {
       action: this.basicFilterAction.bind(this),
       advancedAction: this.advancedFilterActionModal.bind(this),
-      placeholder: 'Search',
+      placeholder: 'Busque pelo nome da cidade',
     };
   }
 
-  private basicFilterAction() {} //chamar a api pra buscar
+  private basicFilterAction(searchTerm: string) {
+    this.isLoading = true;
+    const term = searchTerm.trim().toLowerCase();
+
+    if (term) {
+      this.items = this.originalItems.filter(item =>
+        item.nome.toLowerCase().includes(term)
+      );
+      this.isLoading = false;
+    } else {
+      this.items = [...this.originalItems];
+      this.isLoading = false;
+    }
+  }
 
   private advancedFilterActionModal() {} // chamar o modal de busca avançada
 
