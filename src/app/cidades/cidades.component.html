@@ -14,6 +14,11 @@
     [p-virtual-scroll]="true"
     [p-columns]="cidadesColumns"
     [p-items]="items"
-    >
+  >
   </po-table>
 </po-page-list>
+
+<app-busca-avancada-cidade
+  #buscaAvancada
+  (buscar)="handleBuscar($event)"
+></app-busca-avancada-cidade>
