@@ -1,0 +1,19 @@
+<po-page-slide #pageSlide p-title="Busca Avançada">
+  <div class="po-row">
+    <po-input
+      class="po-md-12 po-sm-12 po-lg-12"
+      [(ngModel)]="this.model.cidade"
+      p-label="Cidade"
+    >
+    </po-input>
+  </div>
+
+  <div class="po-row">
+    <po-button
+      class="po-md-12 po-sm-12 po-lg-12"
+      p-label="Buscar"
+      (p-click)="handleSave()"
+    >
+    </po-button>
+  </div>
+</po-page-slide>
